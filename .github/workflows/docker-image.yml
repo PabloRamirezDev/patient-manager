@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag patient-manager:$(date +%s)
+      run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
   exec:
 
@@ -26,6 +26,6 @@ jobs:
 
     steps:
     - name: Run the Docker image
-      run: docker run patient-manager:latest
+      run: docker-compose up
 
     
