@@ -14,6 +14,8 @@ COPY --from=packages /app/node_modules ./node_modules
 
 COPY . .
 
+ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN yarn build
 
 FROM node:20 as runner
