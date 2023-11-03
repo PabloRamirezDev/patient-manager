@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: ./
+      target: runner
+    volumes:
+      - .:/app
+    command: yarn start
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+  # mysql-db:
+  #   container_name: mysql-db
+  #   build: ./Database
+  #   env_file: .env
+  #   volumes:
+  #    - ./Database/:/scripts/
+  #   ports:
+  #     - "3007:3007"
+  #   expose:
+  #     - "1433"
+  #   command:
+  #     - mysql
