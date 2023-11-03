@@ -2,44 +2,33 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+env:
+  NODE_ENV: ${{vars.NODE_ENV}}
+  MYSQL_HOST: ${{vars.MYSQL_HOST}}
+  MYSQL_PORT: ${{vars.MYSQL_PORT}}
+  MYSQL_DB: ${{vars.MYSQL_DB}}
+  MYSQL_USER: ${{secrets.MYSQL_USER}}
+  MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-      env:
-        NODE_ENV: $NODE_ENV
-        MYSQL_HOST: $MYSQL_HOST
-        MYSQL_PORT: $MYSQL_PORT
-        MYSQL_DB: $MYSQL_DB
-        MYSQL_USER: $MYSQL_USER
-        MYSQL_PASSWORD: $MYSQL_PASSWORD
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
   exec:
-
     runs-on: ubuntu-latest
     environment: production
     needs: build
 
     steps:
-    - name: Run the Docker image
-      run: docker-compose up
-      env:
-        NODE_ENV: $NODE_ENV
-        MYSQL_HOST: $MYSQL_HOST
-        MYSQL_PORT: $MYSQL_PORT
-        MYSQL_DB: $MYSQL_DB
-        MYSQL_USER: $MYSQL_USER
-        MYSQL_PASSWORD: $MYSQL_PASSWORD
-
-    
+      - name: Run the Docker image
+        run: docker-compose up
