@@ -20,6 +20,7 @@ jobs:
   exec:
 
     runs-on: ubuntu-latest
+    needs: build
 
     steps:
     - name: Run the Docker image
