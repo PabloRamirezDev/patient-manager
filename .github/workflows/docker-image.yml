@@ -11,6 +11,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
     - uses: actions/checkout@v3
@@ -20,6 +21,7 @@ jobs:
   exec:
 
     runs-on: ubuntu-latest
+    environment: production
     needs: build
 
     steps:
