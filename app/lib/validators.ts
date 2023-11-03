@@ -1,5 +1,6 @@
 import { PatientFormData } from "../types/PatientFormData";
 import { letterOnlyRegex } from "./regex";
+import { File } from "buffer";
 
 export interface ValidationError<T> {
   field: keyof T;
