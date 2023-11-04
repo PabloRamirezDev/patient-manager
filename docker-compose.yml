@@ -8,13 +8,13 @@ services:
       - .:/app
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV
-      - MYSQL_HOST
-      - MYSQL_PORT
-      - MYSQL_DB
-      - MYSQL_USER
-      - MYSQL_PASSWORD
+    args:
+      NODE_ENV
+      MYSQL_HOST
+      MYSQL_PORT
+      MYSQL_DB
+      MYSQL_USER
+      MYSQL_PASSWORD
   # mysql-db:
   #   container_name: mysql-db
   #   build: ./Database
