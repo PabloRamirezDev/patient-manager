@@ -6,12 +6,11 @@ services:
       target: runner
     volumes:
       - .:/app
-    command: yarn start
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV
-      - MYSQL_HOST=12345
+      - MYSQL_HOST
       - MYSQL_PORT
       - MYSQL_DB
       - MYSQL_USER
