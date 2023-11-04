@@ -15,6 +15,7 @@ services:
       - .:/app
     ports:
       - "3000:3000"
+    command: yarn start
   # mysql-db:
   #   container_name: mysql-db
   #   build: ./Database
