@@ -5,12 +5,12 @@ services:
       context: ./
       target: runner
       args:
-        NODE_ENV
-        MYSQL_HOST
-        MYSQL_PORT
-        MYSQL_DB
-        MYSQL_USER
-        MYSQL_PASSWORD
+        NODE_ENV: $NODE_ENV
+        MYSQL_HOST: $MYSQL_HOST
+        MYSQL_PORT: $MYSQL_PORT
+        MYSQL_DB: $MYSQL_DB
+        MYSQL_USER: $MYSQL_USER
+        MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
       - .:/app
     ports:
