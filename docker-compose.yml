@@ -4,17 +4,17 @@ services:
     build:
       context: ./
       target: runner
+      args:
+        NODE_ENV
+        MYSQL_HOST
+        MYSQL_PORT
+        MYSQL_DB
+        MYSQL_USER
+        MYSQL_PASSWORD
     volumes:
       - .:/app
     ports:
       - "3000:3000"
-    args:
-      NODE_ENV
-      MYSQL_HOST
-      MYSQL_PORT
-      MYSQL_DB
-      MYSQL_USER
-      MYSQL_PASSWORD
   # mysql-db:
   #   container_name: mysql-db
   #   build: ./Database
