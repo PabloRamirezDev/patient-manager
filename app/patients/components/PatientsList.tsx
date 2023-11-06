@@ -8,12 +8,12 @@ import { AddPatientCard } from "./AddPatientCard";
 import axios, { AxiosResponse } from "axios";
 
 export const PatientsList = () => {
-  const { data, isLoading, error, mutate } = useSWR<AxiosResponse<Patient[]>>(
+  const { data, isLoading } = useSWR<AxiosResponse<Patient[]>>(
     "/api/patients",
     axios
   );
 
-  const patients = data?.data!;
+  const patients = data?.data ?? [];
 
   if (isLoading) return <Loader />;
 
