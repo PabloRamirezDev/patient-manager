@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import axios, { AxiosResponse } from "axios";
 import {
@@ -44,9 +44,13 @@ export const PatientsContextProvider = (props: PropsWithChildren) => {
     axios
   );
 
-  const [patients, setPatients] = useState<Patient[]>(
-    JSON.parse(localStorage.getItem("patients") ?? "[]")
-  );
+  const [patients, setPatients] = useState<Patient[]>(JSON.parse("[]"));
+
+  useEffect(() => {
+    const savedPatients = localStorage.getItem("patients");
+    if (!savedPatients) return;
+    setPatients(JSON.parse(savedPatients));
+  }, []);
 
   useEffect(() => {
     if (data?.data) setPatients(data.data);
