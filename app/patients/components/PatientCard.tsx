@@ -18,12 +18,12 @@ export const PatientCard: FC<Props> = (props) => {
   const handleLoad = useCallback(() => {
     setLoaded(true);
   }, []);
-  console.log(patient.id_photo)
+  
   return (
     <FoldingCard
       header={
         <div className="flex flex-row gap-10 justify-between items-center">
-          <img
+          <Image
             className="rounded-md"
             src={patient.id_photo}
             alt={`${patient.name}'s id`}

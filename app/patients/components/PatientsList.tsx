@@ -14,7 +14,6 @@ export const PatientsList = () => {
   return (
     <ul className="flex flex-col gap-4">
       {patients.map((patient, i) => {
-        console.log(i);
         return (
           <li key={patient.id}>
             <PatientCard key={i} index={i} patient={patient} />

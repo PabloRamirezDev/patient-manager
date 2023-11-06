@@ -63,6 +63,7 @@ export const AddPatientForm: FC = () => {
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
+      console.log(patient)
       e.preventDefault();
       setClientValidationResult(initialState);
       const validationResult = validatePatient(patient);
@@ -80,6 +81,7 @@ export const AddPatientForm: FC = () => {
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      console.log(e.target.name, e.target.value)
       if (e.target.files) {
         setPatient({ ...patient, [e.target.name]: e.target.files.item(0) });
         return;
