@@ -114,6 +114,14 @@ const TelInput = (props: InputProps) => {
     setValue(`+${rawValue.code} ${rawValue.number}`);
   }, [rawValue]);
 
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+
+    onChange?.({ target: inputRef.current } as any);
+  }, [val, onChange]);
+
   return (
     <>
       <span className="text-sm text-slate-400 uppercase font-semibold">
@@ -139,11 +147,12 @@ const TelInput = (props: InputProps) => {
         </div>
       </div>
       <input
+        ref={inputRef}
         type="text"
         name={name}
         value={val}
+        hidden
         className="hidden"
-        onChange={onChange}
       />
     </>
   );
