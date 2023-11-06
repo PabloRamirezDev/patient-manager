@@ -1,4 +1,4 @@
-import { DBTables } from "@/app/types/DBTables";
+import { DBTables } from "../app/types/DBTables";
 import { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
