@@ -42,7 +42,9 @@ export const PatientsContextProvider = (props: PropsWithChildren) => {
     axios
   );
 
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<Patient[]>(
+    JSON.parse(localStorage.getItem("patients") ?? "[]")
+  );
 
   useEffect(() => {
     if (data?.data) setPatients(data.data);
@@ -55,14 +57,15 @@ export const PatientsContextProvider = (props: PropsWithChildren) => {
     async (patient: Patient) => {
       const reader = new FileReader();
       reader.addEventListener("load", (e) => {
-        
-        setPatients([
+        const optimisticPatients = [
           ...patients,
           {
             ...patient,
             id_photo: e.target?.result as string,
           },
-        ]);
+        ];
+        setPatients(optimisticPatients);
+        localStorage.setItem("patients", JSON.stringify(optimisticPatients));
       });
       reader.readAsDataURL(patient.id_photo as unknown as Blob);
 
