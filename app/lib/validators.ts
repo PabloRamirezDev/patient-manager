@@ -1,9 +1,8 @@
 import { PatientFormData } from "../types/PatientFormData";
 import { letterOnlyRegex } from "./regex";
-import { File } from "buffer";
 
 export interface ValidationError<T> {
-  field: keyof T;
+  field: keyof T | "general";
   message: string;
 }
 
@@ -43,11 +42,11 @@ export const validatePatient: Validator<PatientFormData> = (patient) => {
     errors.push(getError("phone", "Phone is required."));
   }
 
-  if (!id_photo || !(id_photo instanceof File) || id_photo.size === 0) {
+  if (!id_photo || !(id_photo instanceof Blob) || id_photo.size === 0) {
     errors.push(getError("id_photo", "ID Photo is required."));
   }
 
-  if (!(id_photo instanceof File) || id_photo.type !== "image/jpeg") {
+  if (!(id_photo instanceof Blob) || id_photo.type !== "image/jpeg") {
     errors.push(getError("id_photo", "ID Photo must be in .jpg format."));
   }
 

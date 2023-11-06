@@ -20,3 +20,11 @@ export const getSearch = (req: NextRequest) => {
 
   return searchObj;
 };
+
+export const getFormData = (obj: object) => {
+  const formData = new FormData();
+
+  Object.entries(obj).forEach(([key, value]) => formData.append(key, value));
+
+  return formData;
+};

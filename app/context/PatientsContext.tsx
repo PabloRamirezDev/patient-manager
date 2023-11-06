@@ -1,20 +1,35 @@
 import axios, { AxiosResponse } from "axios";
-import { PropsWithChildren, createContext, useCallback, useMemo } from "react";
+import {
+  PropsWithChildren,
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  // @ts-expect-error
+  experimental_useOptimistic as useOptimistic,
+  useState,
+} from "react";
 import useSWR from "swr";
 import { Patient } from "../types/Patient";
+import { addPatient as addPatientAction } from "../actions/add-patient";
+import { PatientFormData } from "../types/PatientFormData";
+import { ValidatorResult } from "../lib/validators";
+import { getFormData } from "../lib/utils";
 
 interface PatientsContext {
   patients: Patient[];
   isLoading: boolean;
   error: any;
-  onAdd: (patient: Patient) => void;
+  addPatient: (patient: Patient) => void;
+  addPatientResult: ValidatorResult<PatientFormData> | null;
 }
 
 const initial: PatientsContext = {
   patients: [],
   isLoading: true,
   error: null,
-  onAdd: () => {},
+  addPatient: () => {},
+  addPatientResult: null,
 };
 
 export const PatientsContext = createContext(initial);
@@ -22,27 +37,49 @@ export const PatientsContext = createContext(initial);
 export const PatientsContextProvider = (props: PropsWithChildren) => {
   const { children } = props;
 
-  const { data, isLoading, error, mutate } = useSWR<AxiosResponse<Patient[]>>(
+  const { data, isLoading, error } = useSWR<AxiosResponse<Patient[]>>(
     "/api/patients",
     axios
   );
 
-  const patients = useMemo(() => data?.data ?? [], [data]);
+  const [patients, setPatients] = useState<Patient[]>([]);
 
-  const onAdd = useCallback(
-    (patient: Patient) => {
-      if (!data) return;
+  useEffect(() => {
+    if (data?.data) setPatients(data.data);
+  }, [data]);
 
-      mutate({ ...data, data: [...patients, patient] });
+  const [addPatientResult, setAddPatientResult] =
+    useState<ValidatorResult<PatientFormData> | null>(null);
+
+  const addPatient = useCallback(
+    async (patient: Patient) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", (e) => {
+        
+        setPatients([
+          ...patients,
+          {
+            ...patient,
+            id_photo: e.target?.result as string,
+          },
+        ]);
+      });
+      reader.readAsDataURL(patient.id_photo as unknown as Blob);
+
+      const formData = getFormData(patient);
+
+      const result = await addPatientAction(formData);
+      setAddPatientResult(result as ValidatorResult<PatientFormData>);
     },
-    [mutate, data, patients]
+    [setAddPatientResult, patients]
   );
 
   const value = {
     patients,
     isLoading,
     error,
-    onAdd,
+    addPatient,
+    addPatientResult,
   };
 
   return (

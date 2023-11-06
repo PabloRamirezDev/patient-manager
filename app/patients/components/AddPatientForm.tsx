@@ -1,8 +1,9 @@
 "use client";
 
-import { addPatient } from "@/app/actions/add-patient";
+import { FormButton } from "@/app/components/FormButton";
+import { Input } from "@/app/components/Input";
 import { PatientsContext } from "@/app/context/PatientsContext";
-import { validatePatient } from "@/app/lib/validators";
+import { ValidationError, validatePatient } from "@/app/lib/validators";
 import { Patient } from "@/app/types/Patient";
 import { PatientFormData } from "@/app/types/PatientFormData";
 import { useRouter } from "next/navigation";
@@ -10,18 +11,11 @@ import {
   ChangeEvent,
   FC,
   FormEvent,
-  HTMLProps,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
-import {
-  experimental_useFormState as useFormState,
-  //@ts-expect-error
-  experimental_useFormStatus as useFormStatus,
-} from "react-dom";
 
 const inputs = [
   { label: "Name", type: "text", name: "name", required: true },
@@ -36,77 +30,15 @@ const inputs = [
   },
 ];
 
-interface Props {
-  // onAdd: (patient: Patient) => void;
-}
-
 const initialState = {
   valid: false,
-  errors: [],
-};
-
-interface InputProps {
-  label: string;
-  type: string;
-  name: string;
-  accept?: string;
-  error?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
-const FormInput = (props: InputProps) => {
-  const { name, label, error, ...rest } = props;
-
-  const { pending } = useFormStatus();
-
-  return (
-    <div className="flex flex-col gap-2">
-      <label
-        className="text-sm text-slate-400 uppercase font-semibold"
-        htmlFor={name}
-      >
-        {label}
-      </label>
-      <input
-        className="border rounded-md p-2"
-        id={name}
-        name={name}
-        {...rest}
-      />
-      <span className="h-[0.75rem]">
-        {!pending && error && (
-          <div className="text-xs leading-3 animate-shake-x text-red-400">
-            {error}
-          </div>
-        )}
-      </span>
-    </div>
-  );
-};
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      type="submit"
-      className={`p-4 bg-sky-200 rounded-md hover:bg-sky-200/50 active:bg-sky-400/80 duration-300 mt-6 ${
-        pending ? "animate-pulse" : ""
-      }`}
-      disabled={pending}
-    >
-      Submit
-    </button>
-  );
+  errors: [] as ValidationError<PatientFormData>[],
 };
 
 export const AddPatientForm: FC = () => {
-  const { onAdd } = useContext(PatientsContext);
+  const { addPatient, addPatientResult: serverValidationResult } =
+    useContext(PatientsContext);
 
-  const [serverValidationResult, formAction] = useFormState(
-    addPatient,
-    initialState
-  );
   const [clientValidationResult, setClientValidationResult] =
     useState(initialState);
 
@@ -114,7 +46,7 @@ export const AddPatientForm: FC = () => {
     if (clientValidationResult.valid) return serverValidationResult;
 
     return clientValidationResult;
-  }, [clientValidationResult.valid, serverValidationResult.valid]);
+  }, [clientValidationResult, serverValidationResult]);
 
   const [patient, setPatient] = useState<PatientFormData>({
     email: "",
@@ -123,25 +55,27 @@ export const AddPatientForm: FC = () => {
     phone: "",
   });
 
-  const { errors } = serverValidationResult;
+  const { errors } = validationResult || {};
 
-  const generalError = errors.find((e) => e.field === "general");
+  const generalError = errors?.find((e) => e.field === "general");
 
   const router = useRouter();
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
-      const { valid, errors } = validatePatient(patient);
+      e.preventDefault();
+      setClientValidationResult(initialState);
+      const validationResult = validatePatient(patient);
 
-      if (!valid) {
-        alert(errors.map((e) => e.message));
-        e.preventDefault();
+      if (!validationResult.valid) {
+        setClientValidationResult(validationResult);
         return;
       }
 
-      onAdd(patient as Patient);
+      addPatient(patient as Patient);
+      router.push("?");
     },
-    [patient, onAdd]
+    [patient, addPatient, router]
   );
 
   const handleChange = useCallback(
@@ -159,25 +93,15 @@ export const AddPatientForm: FC = () => {
     [patient]
   );
 
-  useEffect(() => {
-    if (serverValidationResult.valid) {
-      router.push("?");
-    }
-  }, [router, serverValidationResult.valid]);
-
   return (
-    <form
-      className="flex flex-col gap-3"
-      onSubmit={handleSubmit}
-      action={formAction}
-    >
+    <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
       {inputs.map((input) => {
         const { name } = input;
 
-        const error = errors.find((e) => e.field === name);
+        const error = errors?.find((e) => e.field === name);
 
         return (
-          <FormInput
+          <Input
             key={name}
             error={error?.message}
             onChange={handleChange}
@@ -185,7 +109,7 @@ export const AddPatientForm: FC = () => {
           />
         );
       })}
-      <SubmitButton />
+      <FormButton text="Submit" type="submit" />
       <span className="h-[0.75rem]">
         {generalError && (
           <div className="text-xs leading-3 animate-shake-x text-red-400 text-center">

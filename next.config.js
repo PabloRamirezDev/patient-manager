@@ -5,9 +5,12 @@ const nextConfig = {
     serverActions: true,
   },
   images: {
-    domains: ["picsum.photos"],
+    domains: [
+      "picsum.photos",
+      "patient-manager-uploads.s3.sa-east-1.amazonaws.com",
+    ],
   },
-  output: 'standalone'
+  output: "standalone",
 };
 
 module.exports = nextConfig;
