@@ -1,4 +1,8 @@
 import type { Knex } from "knex";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(process.cwd());
+
 import { CONFIG } from "./app/lib/config";
 
 // Update with your config settings.
