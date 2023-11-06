@@ -73,12 +73,13 @@ export async function addPatient(formData: FormData) {
 
     const mailer = getMailer();
 
-    await mailer.sendMail({
+    // Do not await to avoid blocking
+    mailer.sendMail({
       from: "John Doe",
       to: patient.email as string,
       subject: "Hi!",
-      text: "Thank you for being part of our family!",
-      html: "<b>Thank you for being part of our family!</b>",
+      text: "Thank you for joining!",
+      html: "<b>Thank you for joining!</b>",
     });
 
     console.log("Email sent.");
